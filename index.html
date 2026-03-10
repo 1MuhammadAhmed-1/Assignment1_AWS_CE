@@ -1,26 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>UniEvent - University Events</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>UniEvent Portal</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .event-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .category { color: #e67e22; font-weight: bold; font-size: 0.9em; }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Official University Events</h1>
-        <div class="row">
-            {% for event in events %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="{{ event.images[0].url }}" class="card-img-top" alt="Event Poster" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ event.name }}</h5>
-                        <p class="card-text text-muted">{{ event.dates.start.localDate }}</p>
-                        <p class="card-text">{{ event.classifications[0].segment.name }}</p>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+<body>
+    <h1>🎓 Official University Events</h1>
+    <hr>
+
+    {% for event in events %}
+    <div class="event-card">
+        <div class="category">
+            {% if event.classifications and event.classifications[0].segment %}
+                {{ event.classifications[0].segment.name }}
+            {% else %}
+                General Event
+            {% endif %}
         </div>
+
+        <h3>{{ event.name }}</h3>
+        
+        <p>Date: {{ event.dates.start.localDate if event.dates and event.dates.start else 'TBA' }}</p>
+        
+        <a href="{{ event.url }}" target="_blank">View Details</a>
     </div>
+    {% else %}
+        <p>No events found in S3. Please run fetch_events.py first.</p>
+    {% endfor %}
 </body>
 </html>
